@@ -149,11 +149,15 @@ RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5)  RC(2,6)  RC(2,7) RC(2,8) RC(2,9
 */
 
 /* Example note: to enable underglow on RP2040, implement an RP2040-compatible
-   led_strip node (PIO or other). For now, the chosen node remains unchanged
-   but the original implementation is commented for safety. */
+   led_strip node (PIO or other). For now, the zmk,underglow chosen property is
+   commented out because the led_strip node above is still the original nRF
+   implementation and is unusable for RP2040. Uncomment and point to a valid
+   led_strip node when an RP2040-compatible implementation is added. */
 
+/*
 / {
 	chosen {
 		zmk,underglow = &led_strip;
 	};
 };
+*/
