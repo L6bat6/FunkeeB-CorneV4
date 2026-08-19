@@ -35,15 +35,21 @@ RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5)  RC(2,6)  RC(2,7) RC(2,8) RC(2,9
 
         wakeup-source;
         diode-direction = "col2row";
-		row-gpios
-			= <&pro_micro 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-			, <&pro_micro 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-			, <&pro_micro 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-			, <&pro_micro 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
-			;
+		/* Rows: originally defined for ProMicro/nRF (&pro_micro). For RP2040
+		   we map to &rp2040 with the same numeric GPIO indices by default.
+		   Adjust if your board uses different pin numbering. */
+		row-gpios = <&rp2040 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+			, <&rp2040 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+			, <&rp2040 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
+			, <&rp2040 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
     };
 };
-// oled,I2c
+
+/* I2C / pinctrl: the original file used NRF_PSEL macros which are nRF-specific
+   and will break RP2040 builds. Commenting original nRF pinctrl entries and
+   providing an RP2040-friendly example below. */
+
+/*
 &pinctrl {
        i2c0_default: i2c0_default {
                group1 {
@@ -60,8 +66,22 @@ RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5)  RC(2,6)  RC(2,7) RC(2,8) RC(2,9
                };
        };
 };
+*/
 
+/* RP2040 example: enable i2c0 and attach ssd1306. Update SDA/SCL GPIO numbers
+   to match your board (common examples: SDA=26, SCL=27 on some RP2040 boards). */
+&i2c0 {
+    status = "okay";
 
+    oled: ssd1306@3c {
+        compatible = "solomon,ssd1306fb";
+        reg = <0x3c>;
+        width = <128>;
+        height = <32>;
+    };
+};
+
+/* Original ProMicro/nRF I2C node commented for reference:
 &pro_micro_i2c {
     status = "okay";
 
@@ -81,7 +101,13 @@ RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5)  RC(2,6)  RC(2,7) RC(2,8) RC(2,9
         prechargep = <0x22>;
     };
 };
-// rgb,SPI
+*/
+
+/* SPI / WS2812: original file used Nordic SPIM and NRF_PSEL macros; comment
+   out the nRF-specific config. On RP2040, WS2812 is commonly driven via PIO
+   or a dedicated driver; adapt below as needed. */
+
+/*
 &pinctrl {
     spi3_default: spi3_default {
         group1 {
@@ -105,7 +131,6 @@ RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5)  RC(2,6)  RC(2,7) RC(2,8) RC(2,9
 	pinctrl-1 = <&spi3_sleep>;
 	pinctrl-names = "default", "sleep";
 
-
 	led_strip: ws2812@0 {
 		compatible = "worldsemi,ws2812-spi";
 		label = "WS2812";
@@ -121,6 +146,11 @@ RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5)  RC(2,6)  RC(2,7) RC(2,8) RC(2,9
 		color-mapping = <LED_COLOR_ID_GREEN LED_COLOR_ID_RED LED_COLOR_ID_BLUE>;
 	};
 };
+*/
+
+/* Example note: to enable underglow on RP2040, implement an RP2040-compatible
+   led_strip node (PIO or other). For now, the chosen node remains unchanged
+   but the original implementation is commented for safety. */
 
 / {
 	chosen {
