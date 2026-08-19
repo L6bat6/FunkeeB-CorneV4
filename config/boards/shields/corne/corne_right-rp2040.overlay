@@ -1,0 +1,25 @@
+/* corne_right overlay for RP2040 */
+#include "corne-rp2040.dtsi"
+
+&default_transform {
+  col-offset = <6>;
+};
+
+&kscan0 {
+  col-gpios = <&rp2040 14 GPIO_ACTIVE_HIGH>
+             , <&rp2040 15 GPIO_ACTIVE_HIGH>
+             , <&rp2040 18 GPIO_ACTIVE_HIGH>
+             , <&rp2040 19 GPIO_ACTIVE_HIGH>
+             , <&rp2040 20 GPIO_ACTIVE_HIGH>
+             , <&rp2040 21 GPIO_ACTIVE_HIGH>;
+};
+
+ / {
+  chosen {
+    zmk,battery = &vbatt;
+  };
+
+  vbatt: vbatt {
+    compatible = "zmk,battery-generic";
+  };
+};
