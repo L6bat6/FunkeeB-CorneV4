@@ -13,3 +13,11 @@ include:
     shield: corne_right
   - board: nice_nano@2.0.0//zmk
     shield: settings_reset
+
+  # RP2040 Pro Micro (sparkfun/compatible) entries for RP2040 conversion
+  # Using the sparkfun_pro_micro_rp2040 target from upstream ZMK boards.
+  - board: sparkfun_pro_micro_rp2040//zmk
+    shield: corne_left
+    # snippet may not be required for RP2040; include if your workflow needs it
+  - board: sparkfun_pro_micro_rp2040//zmk
+    shield: corne_right
